@@ -63,6 +63,11 @@ A full-stack job portal for Marathi-speaking job seekers.
 - `artifacts/simple-samaj` — React + Vite frontend (root `/`)
 - `artifacts/api-server` — Express 5 API server (`/api`)
 
+### Auth Notes
+- Admin token stored in `localStorage` as `admin_token`
+- `setAuthTokenGetter(() => localStorage.getItem("admin_token"))` called in `main.tsx` at startup — injects Bearer token into all API calls automatically
+- Admin credentials: `admin` / `samaj@2024` (token: `simple-samaj-admin-secret-token`)
+
 ### API Routes
 - `GET /api/jobs` — public job listings with filters
 - `GET /api/jobs/stats` — public stats

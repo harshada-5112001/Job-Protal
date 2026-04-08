@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useGetJob, useCreateApplication, getGetJobQueryKey } from "@workspace/api-client-react";
-import { ArrowLeft, CheckCircle2, UploadCloud, Briefcase, Building2, MapPin } from "lucide-react";
+import { ArrowLeft, CheckCircle2, UploadCloud, Building2, MapPin } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 const applySchema = z.object({
   fullName: z.string().min(2, "Name is required"),
@@ -244,7 +245,7 @@ export default function ApplyPage() {
                 </div>
 
                 <div className="space-y-3 pt-4 border-t">
-                  <FormLabel className="text-base">Upload Resume (PDF)</FormLabel>
+                  <Label className="text-base font-medium">Upload Resume (PDF)</Label>
                   <div className="border-2 border-dashed rounded-xl p-8 text-center bg-muted/20 hover:bg-muted/50 transition-colors">
                     <Input 
                       type="file" 
