@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Download, Plus, Trash2, Edit3, LayoutTemplate } from "lucide-react";
+import { Footer } from "@/components/layout/Footer";
 
 type Experience = { id: string; company: string; role: string; duration: string; description: string };
 type Education = { id: string; school: string; degree: string; year: string };
@@ -59,9 +60,9 @@ export default function ResumeBuilder() {
         <Navbar />
       </div>
       
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden no-print container mx-auto">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden container mx-auto">
         {/* Editor Sidebar */}
-        <div className="w-full lg:w-[450px] lg:border-r bg-background overflow-y-auto p-4 md:p-6 lg:h-[calc(100vh-64px)]">
+        <div className="no-print w-full lg:w-[450px] lg:border-r bg-background overflow-y-auto p-4 md:p-6 lg:h-[calc(100vh-64px)]">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">Resume Builder</h1>
           </div>
@@ -185,7 +186,7 @@ export default function ResumeBuilder() {
 
         {/* Live Preview Area */}
         <div className="flex-1 bg-muted/30 p-4 lg:p-8 overflow-y-auto lg:h-[calc(100vh-64px)] flex flex-col items-center">
-          <div className="w-full max-w-[210mm] flex justify-between items-center mb-6">
+          <div className="no-print w-full max-w-[210mm] flex justify-between items-center mb-6">
             <div className="flex items-center gap-2">
               <LayoutTemplate className="w-5 h-5 text-muted-foreground" />
               <div className="flex bg-background rounded-lg border p-1">
@@ -436,6 +437,7 @@ export default function ResumeBuilder() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

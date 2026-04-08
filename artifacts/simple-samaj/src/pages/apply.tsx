@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useGetJob, useCreateApplication, getGetJobQueryKey } from "@workspace/api-client-react";
 import { ArrowLeft, CheckCircle2, UploadCloud, Building2, MapPin } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Footer } from "@/components/layout/Footer";
 
 const applySchema = z.object({
   fullName: z.string().min(2, "Name is required"),
@@ -282,6 +283,7 @@ export default function ApplyPage() {
           </CardContent>
         </Card>
       </main>
+      <Footer />
     </div>
   );
 }

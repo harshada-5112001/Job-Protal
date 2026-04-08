@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useListJobs, useGetJobStats } from "@workspace/api-client-react";
+import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -199,6 +200,7 @@ export default function Home() {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }
