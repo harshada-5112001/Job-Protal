@@ -3,13 +3,19 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Simple Samaj Job Portal API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: jobs
+    description: Job listing operations
+  - name: applications
+    description: Job application operations
+  - name: admin
+    description: Admin panel operations
 paths:
   /healthz:
     get:
@@ -24,6 +30,260 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /jobs:
+    get:
+      operationId: listJobs
+      tags: [jobs]
+      summary: List all active jobs
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [IT, Non-IT, all]
+          description: Filter by job type
+        - name: location
+          in: query
+          schema:
+            type: string
+          description: Filter by location
+        - name: minSalary
+          in: query
+          schema:
+            type: number
+          description: Minimum salary filter
+        - name: maxSalary
+          in: query
+          schema:
+            type: number
+          description: Maximum salary filter
+        - name: experience
+          in: query
+          schema:
+            type: string
+          description: Experience level filter
+      responses:
+        "200":
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Job"
+
+  /jobs/{id}:
+    get:
+      operationId: getJob
+      tags: [jobs]
+      summary: Get a single job by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "404":
+          description: Job not found
+
+  /jobs/stats:
+    get:
+      operationId: getJobStats
+      tags: [jobs]
+      summary: Get job statistics summary
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobStats"
+
+  /applications:
+    post:
+      operationId: createApplication
+      tags: [applications]
+      summary: Submit a job application
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateApplicationBody"
+      responses:
+        "201":
+          description: Application submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        "400":
+          description: Validation error
+
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginBody"
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLoginResponse"
+        "401":
+          description: Unauthorized
+
+  /admin/jobs:
+    get:
+      operationId: adminListJobs
+      tags: [admin]
+      summary: Admin - list all jobs
+      responses:
+        "200":
+          description: All jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Job"
+    post:
+      operationId: adminCreateJob
+      tags: [admin]
+      summary: Admin - create a job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJobBody"
+      responses:
+        "201":
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+
+  /admin/jobs/{id}:
+    put:
+      operationId: adminUpdateJob
+      tags: [admin]
+      summary: Admin - update a job
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJobBody"
+      responses:
+        "200":
+          description: Job updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+    delete:
+      operationId: adminDeleteJob
+      tags: [admin]
+      summary: Admin - delete a job
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /admin/applications:
+    get:
+      operationId: adminListApplications
+      tags: [admin]
+      summary: Admin - list all applications
+      parameters:
+        - name: jobId
+          in: query
+          schema:
+            type: integer
+          description: Filter by job ID
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, called, selected, rejected]
+          description: Filter by status
+      responses:
+        "200":
+          description: All applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApplicationWithJob"
+
+  /admin/applications/{id}/status:
+    put:
+      operationId: adminUpdateApplicationStatus
+      tags: [admin]
+      summary: Admin - update application status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateApplicationStatusBody"
+      responses:
+        "200":
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /admin/stats:
+    get:
+      operationId: adminGetStats
+      tags: [admin]
+      summary: Admin dashboard stats
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +294,230 @@ components:
       required:
         - status
 
+    Job:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        company:
+          type: string
+        type:
+          type: string
+          enum: [IT, Non-IT]
+        location:
+          type: string
+        salaryMin:
+          type: number
+          nullable: true
+        salaryMax:
+          type: number
+          nullable: true
+        experience:
+          type: string
+        description:
+          type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - title
+        - company
+        - type
+        - location
+        - experience
+        - description
+        - isActive
+        - createdAt
+
+    CreateJobBody:
+      type: object
+      properties:
+        title:
+          type: string
+        company:
+          type: string
+        type:
+          type: string
+          enum: [IT, Non-IT]
+        location:
+          type: string
+        salaryMin:
+          type: number
+          nullable: true
+        salaryMax:
+          type: number
+          nullable: true
+        experience:
+          type: string
+        description:
+          type: string
+        isActive:
+          type: boolean
+      required:
+        - title
+        - company
+        - type
+        - location
+        - experience
+        - description
+
+    Application:
+      type: object
+      properties:
+        id:
+          type: integer
+        jobId:
+          type: integer
+          nullable: true
+        fullName:
+          type: string
+        mobileNumber:
+          type: string
+        email:
+          type: string
+        location:
+          type: string
+        experience:
+          type: string
+        skills:
+          type: string
+        resumeUrl:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [pending, called, selected, rejected]
+        createdAt:
+          type: string
+      required:
+        - id
+        - fullName
+        - mobileNumber
+        - email
+        - location
+        - experience
+        - skills
+        - status
+        - createdAt
+
+    ApplicationWithJob:
+      allOf:
+        - $ref: "#/components/schemas/Application"
+        - type: object
+          properties:
+            jobTitle:
+              type: string
+              nullable: true
+            jobCompany:
+              type: string
+              nullable: true
+
+    CreateApplicationBody:
+      type: object
+      properties:
+        jobId:
+          type: integer
+          nullable: true
+        fullName:
+          type: string
+        mobileNumber:
+          type: string
+        email:
+          type: string
+        location:
+          type: string
+        experience:
+          type: string
+        skills:
+          type: string
+        resume:
+          type: string
+          format: binary
+          nullable: true
+      required:
+        - fullName
+        - mobileNumber
+        - email
+        - location
+        - experience
+        - skills
+
+    UpdateApplicationStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, called, selected, rejected]
+      required:
+        - status
+
+    AdminLoginBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    AdminLoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        username:
+          type: string
+      required:
+        - token
+        - username
+
+    JobStats:
+      type: object
+      properties:
+        total:
+          type: integer
+        itJobs:
+          type: integer
+        nonItJobs:
+          type: integer
+        locations:
+          type: array
+          items:
+            type: string
+      required:
+        - total
+        - itJobs
+        - nonItJobs
+        - locations
+
+    AdminStats:
+      type: object
+      properties:
+        totalJobs:
+          type: integer
+        activeJobs:
+          type: integer
+        totalApplications:
+          type: integer
+        pendingApplications:
+          type: integer
+        selectedApplications:
+          type: integer
+        rejectedApplications:
+          type: integer
+        calledApplications:
+          type: integer
+      required:
+        - totalJobs
+        - activeJobs
+        - totalApplications
+        - pendingApplications
+        - selectedApplications
+        - rejectedApplications
+        - calledApplications

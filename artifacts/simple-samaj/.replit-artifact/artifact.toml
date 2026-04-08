@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Simple Samaj - Job Portal"
+version = "1.0.0"
+id = "artifacts/simple-samaj"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24291
+
+[services.development]
+run = "pnpm --filter @workspace/simple-samaj run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/simple-samaj", "run", "build" ]
+publicDir = "artifacts/simple-samaj/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24291"
+BASE_PATH = "/"
