@@ -1,10 +1,10 @@
 # Job Finder Plus
 
-**Job Finder Plus** हा एक full-stack monorepo प्रोजेक्ट आहे ज्यात job search frontend, API backend आणि database schema सर्व समाविष्ट आहेत.
+Job Finder Plus is a full-stack monorepo project that includes a job search frontend, an API backend, and a database schema all in one place.
 
 ## Project Description
 
-हा प्रोजेक्ट job seekers आणि employers साठी एक self-contained application आहे. Users job listings पाहू शकतात, filter करू शकतात, job ला apply करू शकतात आणि resume builder/ contact form सारख्या utility features वापरू शकतात.
+This project is a self-contained application designed for both job seekers and employers. Users can browse job listings, apply filters, and apply for jobs easily. It also includes utility features such as a resume builder and a contact form to enhance the user experience.
 
 ### मुख्य उद्देश
 - Job discovery आणि application flow सुलभ करणे
