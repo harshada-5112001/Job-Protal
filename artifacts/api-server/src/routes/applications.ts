@@ -69,7 +69,11 @@ router.get("/resumes/:filename", (req, res): void => {
     res.status(404).json({ error: "Resume not found" });
     return;
   }
-  res.sendFile(filePath);
+  res.download(filePath, safeFilename, (err) => {
+    if (err) {
+      res.status(500).json({ error: "Unable to download resume" });
+    }
+  });
 });
 
 export default router;

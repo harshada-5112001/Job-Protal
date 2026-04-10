@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useLocation, Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +39,10 @@ export default function ApplyPage() {
   });
   
   const createApplication = useCreateApplication();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [jobId]);
 
   const form = useForm<ApplyFormValues>({
     resolver: zodResolver(applySchema),

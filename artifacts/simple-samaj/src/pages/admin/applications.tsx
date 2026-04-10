@@ -144,22 +144,22 @@ export default function AdminApplications() {
                       </DialogHeader>
                       {selectedApp && (
                         <div className="space-y-4 mt-4">
-                          <div className="grid grid-cols-2 gap-4 border-b pb-4">
+                          <div className="grid grid-cols-1 gap-4 border-b pb-4 sm:grid-cols-2">
                             <div>
                               <div className="text-sm text-muted-foreground">Name</div>
-                              <div className="font-medium">{selectedApp.fullName}</div>
+                              <div className="font-medium break-words">{selectedApp.fullName}</div>
                             </div>
                             <div>
                               <div className="text-sm text-muted-foreground">Email</div>
-                              <div className="font-medium">{selectedApp.email}</div>
+                              <div className="font-medium break-words">{selectedApp.email}</div>
                             </div>
                             <div>
                               <div className="text-sm text-muted-foreground">Mobile</div>
-                              <div className="font-medium">{selectedApp.mobileNumber}</div>
+                              <div className="font-medium break-words">{selectedApp.mobileNumber}</div>
                             </div>
                             <div>
                               <div className="text-sm text-muted-foreground">Location</div>
-                              <div className="font-medium">{selectedApp.location}</div>
+                              <div className="font-medium break-words">{selectedApp.location}</div>
                             </div>
                           </div>
                           
@@ -180,7 +180,12 @@ export default function AdminApplications() {
                               <div className="mt-1">{getStatusBadge(selectedApp.status)}</div>
                             </div>
                             {selectedApp.resumeUrl ? (
-                              <a href={selectedApp.resumeUrl} target="_blank" rel="noopener noreferrer">
+                              <a
+                                href={`${import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? "http://localhost:8080" : "")}${selectedApp.resumeUrl}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
+                              >
                                 <Button className="gap-2">
                                   <Download className="w-4 h-4" /> Download Resume
                                 </Button>

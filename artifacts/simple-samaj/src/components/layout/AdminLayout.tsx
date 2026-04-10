@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Briefcase, FileText, LogOut } from "lucide-react";
+import { LayoutDashboard, Briefcase, FileText, Mail, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -22,6 +22,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Jobs", href: "/admin/jobs", icon: Briefcase },
     { name: "Applications", href: "/admin/applications", icon: FileText },
+    { name: "Messages", href: "/admin/messages", icon: Mail },
   ];
 
   return (

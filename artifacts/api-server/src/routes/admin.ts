@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { eq, and, sql } from "drizzle-orm";
-import { db, jobsTable, applicationsTable } from "@workspace/db";
+import { db, jobsTable, applicationsTable, contactMessagesTable } from "@workspace/db";
 import {
   AdminLoginBody,
   AdminCreateJobBody,
@@ -190,6 +190,37 @@ router.put("/admin/applications/:id/status", requireAdmin, async (req, res): Pro
   }
 
   res.json(serializeDates(application as unknown as Record<string, unknown>));
+});
+
+router.get("/admin/contact-messages", requireAdmin, async (_req, res): Promise<void> => {
+  const messages = await db
+    .select()
+    .from(contactMessagesTable)
+    .orderBy(sql`${contactMessagesTable.createdAt} desc`);
+
+  res.json(messages.map((message) => serializeDates(message as unknown as Record<string, unknown>)));
+});
+
+router.put("/admin/contact-messages/:id/read", requireAdmin, async (req, res): Promise<void> => {
+  const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const id = parseInt(raw, 10);
+  if (Number.isNaN(id)) {
+    res.status(400).json({ error: "Invalid message ID" });
+    return;
+  }
+
+  const [message] = await db
+    .update(contactMessagesTable)
+    .set({ status: "read" })
+    .where(eq(contactMessagesTable.id, id))
+    .returning();
+
+  if (!message) {
+    res.status(404).json({ error: "Message not found" });
+    return;
+  }
+
+  res.json(serializeDates(message as unknown as Record<string, unknown>));
 });
 
 router.get("/admin/stats", requireAdmin, async (_req, res): Promise<void> => {

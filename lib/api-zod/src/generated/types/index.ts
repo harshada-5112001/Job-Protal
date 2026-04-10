@@ -17,6 +17,7 @@ export * from "./applicationWithJob";
 export * from "./createApplicationBody";
 export * from "./createJobBody";
 export * from "./createJobBodyType";
+export * from "./errorResponse";
 export * from "./healthStatus";
 export * from "./job";
 export * from "./jobStats";

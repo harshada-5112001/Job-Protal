@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Link } from "wouter";
+import { useState, useMemo, useEffect } from "react";
+import { Link, useSearch, useLocation } from "wouter";
 import { Search, MapPin, Briefcase, Filter, Building2, IndianRupee } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import { useListJobs, useGetJobStats } from "@workspace/api-client-react";
 import { Footer } from "@/components/layout/Footer";
 
 export default function Home() {
+  const searchParams = useSearch();
+  const [location, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "IT" | "Non-IT">("all");
   const [locationFilter, setLocationFilter] = useState("all");
@@ -18,7 +20,71 @@ export default function Home() {
   const { data: jobs = [], isLoading: isLoadingJobs } = useListJobs();
   const { data: stats, isLoading: isLoadingStats } = useGetJobStats();
 
+  // Parse URL parameters on component mount and when URL changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    const type = params.get('type');
+    const location = params.get('location');
+
+    if (type && (type === 'IT' || type === 'Non-IT')) {
+      setTypeFilter(type);
+    } else {
+      setTypeFilter("all");
+    }
+    
+    if (location) {
+      setLocationFilter(location);
+    } else {
+      setLocationFilter("all");
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const scrollToJobs = () => {
+      if (window.location.hash === "#jobs") {
+        const jobsSection = document.getElementById("jobs");
+        if (jobsSection) {
+          jobsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    };
+
+    scrollToJobs();
+    window.addEventListener("hashchange", scrollToJobs);
+    return () => window.removeEventListener("hashchange", scrollToJobs);
+  }, [location]);
+
+  // Update URL when filters change
+  const updateFilters = (newTypeFilter?: "all" | "IT" | "Non-IT", newLocationFilter?: string) => {
+    const params = new URLSearchParams();
+    
+    const type = newTypeFilter !== undefined ? newTypeFilter : typeFilter;
+    const location = newLocationFilter !== undefined ? newLocationFilter : locationFilter;
+    
+    if (type !== "all") {
+      params.set('type', type);
+    }
+    
+    if (location !== "all") {
+      params.set('location', location);
+    }
+    
+    const queryString = params.toString();
+    setLocation(queryString ? `/?${queryString}` : '/');
+  };
+
+  const handleTypeFilterChange = (value: "all" | "IT" | "Non-IT") => {
+    setTypeFilter(value);
+    updateFilters(value);
+  };
+
+  const handleLocationFilterChange = (value: string) => {
+    setLocationFilter(value);
+    updateFilters(undefined, value);
+  };
+
   const filteredJobs = useMemo(() => {
+    if (!Array.isArray(jobs)) return [];
     return jobs.filter((job) => {
       const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                            job.company.toLowerCase().includes(searchTerm.toLowerCase());
@@ -44,7 +110,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            The trusted career partner for Marathi-speaking professionals. Connecting local talent with top IT and Non-IT opportunities.
+            The trusted career partner for professionals. Connecting local talent with top IT and Non-IT opportunities.
           </p>
           
           {/* Stats */}
@@ -77,7 +143,7 @@ export default function Home() {
               />
             </div>
             <div className="flex gap-3">
-              <Select value={typeFilter} onValueChange={(v: any) => setTypeFilter(v)}>
+              <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
                 <SelectTrigger className="h-12 w-[140px] rounded-xl bg-background">
                   <Briefcase className="h-4 w-4 mr-2 text-muted-foreground" />
                   <SelectValue placeholder="Job Type" />
@@ -89,14 +155,14 @@ export default function Home() {
                 </SelectContent>
               </Select>
 
-              <Select value={locationFilter} onValueChange={setLocationFilter}>
+              <Select value={locationFilter} onValueChange={handleLocationFilterChange}>
                 <SelectTrigger className="h-12 w-[160px] rounded-xl bg-background">
                   <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
                   <SelectValue placeholder="Location" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Locations</SelectItem>
-                  {stats?.locations.map(loc => (
+                  {stats?.locations?.map(loc => (
                     <SelectItem key={loc} value={loc}>{loc}</SelectItem>
                   ))}
                 </SelectContent>
@@ -107,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* Jobs Grid */}
-      <main className="flex-1 container mx-auto px-4 md:px-8 py-12">
+      <main id="jobs" className="flex-1 container mx-auto px-4 md:px-8 py-12" data-jobs-section>
         <div className="flex justify-between items-end mb-8">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Latest Opportunities</h2>
@@ -142,6 +208,7 @@ export default function Home() {
                 setSearchTerm("");
                 setTypeFilter("all");
                 setLocationFilter("all");
+                setLocation('/');
               }}
             >
               Clear Filters
@@ -204,3 +271,4 @@ export default function Home() {
     </div>
   );
 }
+

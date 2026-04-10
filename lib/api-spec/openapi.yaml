@@ -17,7 +17,7 @@ tags:
   - name: admin
     description: Admin panel operations
 paths:
-  /healthz:
+  /health:
     get:
       operationId: healthCheck
       tags: [health]
@@ -148,6 +148,10 @@ paths:
                 $ref: "#/components/schemas/AdminLoginResponse"
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /admin/jobs:
     get:
@@ -521,3 +525,9 @@ components:
         - selectedApplications
         - rejectedApplications
         - calledApplications
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string

@@ -25,6 +25,7 @@ import type {
   ApplicationWithJob,
   CreateApplicationBody,
   CreateJobBody,
+  ErrorResponse,
   HealthStatus,
   Job,
   JobStats,
@@ -46,7 +47,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Health check
  */
 export const getHealthCheckUrl = () => {
-  return `/api/healthz`;
+  return `/api/health`;
 };
 
 export const healthCheck = async (
@@ -59,7 +60,7 @@ export const healthCheck = async (
 };
 
 export const getHealthCheckQueryKey = () => {
-  return [`/api/healthz`] as const;
+  return [`/api/health`] as const;
 };
 
 export const getHealthCheckQueryOptions = <
@@ -484,7 +485,7 @@ export const adminLogin = async (
 };
 
 export const getAdminLoginMutationOptions = <
-  TError = ErrorType<void>,
+  TError = ErrorType<ErrorResponse>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -525,13 +526,13 @@ export type AdminLoginMutationResult = NonNullable<
   Awaited<ReturnType<typeof adminLogin>>
 >;
 export type AdminLoginMutationBody = BodyType<AdminLoginBody>;
-export type AdminLoginMutationError = ErrorType<void>;
+export type AdminLoginMutationError = ErrorType<ErrorResponse>;
 
 /**
  * @summary Admin login
  */
 export const useAdminLogin = <
-  TError = ErrorType<void>,
+  TError = ErrorType<ErrorResponse>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<

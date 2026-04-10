@@ -131,6 +131,10 @@ export interface AdminStats {
   calledApplications: number;
 }
 
+export interface ErrorResponse {
+  error?: string;
+}
+
 export type ListJobsParams = {
   /**
    * Filter by job type

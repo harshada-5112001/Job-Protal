@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Download, Plus, Trash2, Edit3, LayoutTemplate } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
+import html2pdf from 'html2pdf.js';
 
 type Experience = { id: string; company: string; role: string; duration: string; description: string };
 type Education = { id: string; school: string; degree: string; year: string };
@@ -33,7 +34,18 @@ export default function ResumeBuilder() {
   const [template, setTemplate] = useState<"modern" | "classic" | "minimal">("modern");
 
   const handlePrint = () => {
-    window.print();
+    const element = document.getElementById('resume-preview');
+    if (!element) return;
+
+    const opt = {
+      margin: 0,
+      filename: `${name || 'resume'}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    } as const;
+
+    html2pdf().set(opt).from(element).save();
   };
 
   const addExperience = () => setExperience([...experience, { id: Date.now().toString(), company: "", role: "", duration: "", description: "" }]);
