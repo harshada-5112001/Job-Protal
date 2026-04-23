@@ -1,4 +1,4 @@
-import { db, applicationsTable, jobsTable } from "@workspace/db";
+import { applicationsTable, db, jobsTable } from "@workspace/db";
 
 type DummyApplication = {
   fullName: string;
@@ -62,56 +62,6 @@ const dummyApplications: DummyApplication[] = [
     resumeUrl: "/resumes/mrunal-shinde.pdf",
     status: "rejected",
   },
-  {
-    fullName: "Amit Reddy",
-    mobileNumber: "9234567801",
-    email: "amit.reddy@example.com",
-    location: "Delhi",
-    experience: "4 years",
-    skills: "Sales, CRM, Client Management",
-    resumeUrl: "/resumes/amit-reddy.pdf",
-    status: "pending",
-  },
-  {
-    fullName: "Pooja Singh",
-    mobileNumber: "9101122334",
-    email: "pooja.singh@example.com",
-    location: "Ahmedabad",
-    experience: "2 years",
-    skills: "Content Writing, SEO, Blogging",
-    resumeUrl: "/resumes/pooja-singh.pdf",
-    status: "pending",
-  },
-  {
-    fullName: "Neeraj Kulkarni",
-    mobileNumber: "9887766554",
-    email: "neeraj.kulkarni@example.com",
-    location: "Bangalore",
-    experience: "6 years",
-    skills: "Full Stack Development, React, Node.js",
-    resumeUrl: "/resumes/neeraj-kulkarni.pdf",
-    status: "called",
-  },
-  {
-    fullName: "Shruti Patil",
-    mobileNumber: "9765432109",
-    email: "shruti.patil@example.com",
-    location: "Pune",
-    experience: "1 year",
-    skills: "QA Testing, Selenium, Cypress",
-    resumeUrl: "/resumes/shruti-patil.pdf",
-    status: "pending",
-  },
-  {
-    fullName: "Rohan Desai",
-    mobileNumber: "9054321678",
-    email: "rohan.desai@example.com",
-    location: "Mumbai",
-    experience: "3 years",
-    skills: "Marketing, Social Media, Content Strategy",
-    resumeUrl: "/resumes/rohan-desai.pdf",
-    status: "selected",
-  },
 ];
 
 async function addDummyApplications() {
@@ -127,7 +77,7 @@ async function addDummyApplications() {
       jobId: jobIds[index % jobIds.length],
     }));
 
-    console.log("Adding 10 dummy applications...");
+    console.log("Adding 5 dummy applications...");
     const inserted = await db.insert(applicationsTable).values(applications).returning();
 
     console.log(`✅ Successfully added ${inserted.length} applications!`);

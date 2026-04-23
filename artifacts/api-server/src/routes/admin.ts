@@ -1,17 +1,17 @@
-import { Router, type IRouter } from "express";
-import { eq, and, sql } from "drizzle-orm";
-import { db, jobsTable, applicationsTable, contactMessagesTable } from "@workspace/db";
 import {
-  AdminLoginBody,
-  AdminCreateJobBody,
-  AdminUpdateJobBody,
-  AdminUpdateJobParams,
-  AdminDeleteJobParams,
-  AdminListApplicationsQueryParams,
-  AdminUpdateApplicationStatusParams,
-  AdminUpdateApplicationStatusBody,
-  AdminGetStatsResponse,
+    AdminCreateJobBody,
+    AdminDeleteJobParams,
+    AdminGetStatsResponse,
+    AdminListApplicationsQueryParams,
+    AdminLoginBody,
+    AdminUpdateApplicationStatusBody,
+    AdminUpdateApplicationStatusParams,
+    AdminUpdateJobBody,
+    AdminUpdateJobParams,
 } from "@workspace/api-zod";
+import { applicationsTable, contactMessagesTable, db, jobsTable } from "@workspace/db";
+import { and, eq, sql } from "drizzle-orm";
+import { Router, type IRouter } from "express";
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "samaj@2024";
@@ -69,10 +69,19 @@ router.post("/admin/jobs", requireAdmin, async (req, res): Promise<void> => {
     return;
   }
 
-  const [job] = await db.insert(jobsTable).values({
-    ...parsed.data,
+  const jobData = {
+    title: parsed.data.title,
+    company: parsed.data.company,
+    type: parsed.data.type,
+    location: parsed.data.location,
+    salaryMin: parsed.data.salaryMin ?? undefined,
+    salaryMax: parsed.data.salaryMax ?? undefined,
+    experience: parsed.data.experience,
+    description: parsed.data.description,
     isActive: parsed.data.isActive ?? true,
-  }).returning();
+  };
+
+  const [job] = await db.insert(jobsTable).values(jobData).returning();
 
   res.status(201).json(serializeDates(job as unknown as Record<string, unknown>));
 });
